@@ -19,10 +19,6 @@ import app.cash.redwood.Modifier
 import app.cash.redwood.RedwoodCodegenApi
 import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.ChildrenChange
-import app.cash.redwood.protocol.ChildrenChange.Add.Companion.invoke
-import app.cash.redwood.protocol.ChildrenChange.Move.Companion.invoke
-import app.cash.redwood.protocol.ChildrenChange.Remove
-import app.cash.redwood.protocol.ChildrenChange.Remove.Companion.invoke
 import app.cash.redwood.protocol.ChildrenTag
 import app.cash.redwood.protocol.Event
 import app.cash.redwood.protocol.Id
@@ -54,9 +50,9 @@ internal actual fun bridgeGuestProtocolAdapter(
 
 /**
  * A [GuestProtocolAdapter] that constructs bridge-compatible JS [UiChange] objects on the JS side
- * and sends them via [app.cash.redwood.protocol.BridgeChange] through the RDMA channel.
+ * and sends them via [app.cash.redwood.protocol.BridgeChange] through the direct bridge channel.
  *
- * When the RDMA global has [appendBridgeChange] available, this adapter constructs JS objects
+ * When the direct bridge global has [appendBridgeChange] available, this adapter constructs JS objects
  * matching the host-side [UiChange] classes (whose JS prototypes carry [bridge_dispatch] from
  * [bridge_init_all]) and sends them via [appendBridgeChange]. The C++ host uses
  * [JniBridgeDispatch] to convert them to JVM [UiChange] objects, wrapping in
@@ -112,16 +108,16 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiCreate(id, tag)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, change)
   }
 
   override fun appendBridgeChange(
     id: Id,
     wrapped: Any?,
   ) {
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, wrapped)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, wrapped)
   }
 
   // -- Bridge path for property changes --
@@ -135,8 +131,8 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, change)
   }
 
   override fun appendPropertyChange(
@@ -147,8 +143,8 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, change)
   }
 
   override fun appendPropertyChange(
@@ -159,8 +155,8 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, change)
   }
 
   override fun appendBridgedPropertyChange(
@@ -173,15 +169,15 @@ internal class BridgeGuestProtocolAdapterImpl(
     // serializer-taking appendPropertyChange overloads above.
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, change)
   }
 
   override fun appendModifierChange(id: Id, value: Modifier) {
     val uiChange = UiModifierChange(id, reuse = false, value)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, uiChange)
   }
 
   override fun appendAdd(
@@ -205,8 +201,8 @@ internal class BridgeGuestProtocolAdapterImpl(
     val protocolChange = ChildrenChange.Add(id, tag, childId, index)
     val uiChange = UiChildrenChange(protocolChange)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, uiChange)
   }
 
   override fun appendMove(
@@ -219,8 +215,8 @@ internal class BridgeGuestProtocolAdapterImpl(
     val protocolChange = ChildrenChange.Move(id, tag, fromIndex, toIndex, count)
     val uiChange = UiChildrenChange(protocolChange)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, uiChange)
   }
 
   override fun appendRemove(
@@ -236,14 +232,14 @@ internal class BridgeGuestProtocolAdapterImpl(
     pendingRemoveObjects.add(protocolChange)
     val uiChange = UiChildrenChange(protocolChange)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    directBridgeObj.appendBridgeChange(id.value, uiChange)
   }
 
   override fun emitChanges() {
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    if (rdmaObj == undefined) {
-      throw AssertionError("RDMA changes channel not registered")
+    val directBridgeObj: dynamic = js("globalThis.app_cash_redwood_directSendChanges")
+    if (directBridgeObj == undefined) {
+      throw AssertionError("Direct bridge changes channel not registered")
     }
 
     removed.forEach { id ->
@@ -254,7 +250,7 @@ internal class BridgeGuestProtocolAdapterImpl(
     }
     removed.clear()
 
-    rdmaObj.finishChanges()
+    directBridgeObj.finishChanges()
     pendingRemoveObjects.clear()
     pinnedObjects = js("[]")
   }

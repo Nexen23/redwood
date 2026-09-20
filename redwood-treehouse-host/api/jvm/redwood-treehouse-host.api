@@ -96,10 +96,10 @@ public final class app/cash/redwood/treehouse/MemoryStateStore : app/cash/redwoo
 	public fun put (Ljava/lang/String;Lapp/cash/redwood/treehouse/StateSnapshot;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public final class app/cash/redwood/treehouse/RdmaBridge : app/cash/redwood/protocol/ChangesSink {
-	public static final field Companion Lapp/cash/redwood/treehouse/RdmaBridge$Companion;
+public final class app/cash/redwood/treehouse/DirectBridge : app/cash/redwood/protocol/ChangesSink {
+	public static final field Companion Lapp/cash/redwood/treehouse/DirectBridge$Companion;
 	public fun <init> ()V
-	public final fun asRdmaChangeSink ()Lapp/cash/zipline/RdmaChangeSink;
+	public final fun asDirectChangeSink ()Lapp/cash/zipline/DirectChangeSink;
 	public static final fun createAdd (IIII)Lapp/cash/redwood/protocol/ChildrenChange;
 	public static final fun createBridgeChange (ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
 	public static final fun createCreate (II)Lapp/cash/redwood/protocol/Create;
@@ -120,7 +120,7 @@ public final class app/cash/redwood/treehouse/RdmaBridge : app/cash/redwood/prot
 	public fun sendChanges (Ljava/util/List;)V
 }
 
-public final class app/cash/redwood/treehouse/RdmaBridge$Companion {
+public final class app/cash/redwood/treehouse/DirectBridge$Companion {
 	public final fun createAdd (IIII)Lapp/cash/redwood/protocol/ChildrenChange;
 	public final fun createBridgeChange (ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
 	public final fun createCreate (II)Lapp/cash/redwood/protocol/Create;

@@ -38,7 +38,7 @@ public abstract class RedwoodGeneratorExtension {
   /**
    * When true, protocol-guest generation drops JSON event decoding and per-widget serializers:
    * host→guest events arrive via the direct event sink and guest→host property changes via the
-   * bridge guest adapter. Requires an RDMA-enabled (direct bridge) guest at runtime.
+   * bridge guest adapter. Requires a direct change bridge guest at runtime.
    */
   public abstract val directEventsOnly: Property<Boolean>
 }

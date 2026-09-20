@@ -8,12 +8,12 @@ package app.cash.redwood.treehouse
  * It must be loaded after libhermesvmlean (loaded by Zipline's JsEngine) so Hermes
  * symbols are available for resolution.
  */
-public object RdmaBridgeLibraryLoader {
+public object DirectBridgeLibraryLoader {
 
   public fun load() {
     System.loadLibrary("redwood-bridge")
 
-    // The bridge dispatch (rdmaChangeToJava) calls JNI FindClass for bridge-
+    // The bridge dispatch (directChangeToJava) calls JNI FindClass for bridge-
     // annotated classes (e.g. ChildrenChange$Add). These classes pull in
     // kotlinx.serialization, whose transitive dependencies include
     // CoroutineExceptionHandlerImplKt. Its <clinit> calls ServiceLoader.load(),

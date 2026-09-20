@@ -390,11 +390,11 @@ private class ViewContentCodeBinding<A : AppService>(
   )
 
   /**
-   * The [RdmaBridge] attached to this binding's zipline session, resolved on the zipline
+   * The [DirectBridge] attached to this binding's zipline session, resolved on the zipline
    * dispatcher when the binding starts. Null before [start] and after [cancel].
    */
   @Volatile
-  private var rdmaBridgeOrNull: RdmaBridge? = null
+  private var directBridgeOrNull: DirectBridge? = null
 
   /** Only accessed on [TreehouseDispatchers.ui]. Empty after [initView]. */
   private val changesAwaitingInitView = ArrayDeque<List<UiChange>>()
@@ -521,10 +521,10 @@ private class ViewContentCodeBinding<A : AppService>(
   }
 
   /**
-   * The [RdmaBridge] attached to this binding's zipline session.
+   * The [DirectBridge] attached to this binding's zipline session.
    *
    * The session's QuickJS runtime routes its change stream into this same instance (the app
-   * wires [app.cash.zipline.QuickJs.rdmaChangeSink] from the instance it attached at
+   * wires [app.cash.zipline.QuickJs.directChangeSink] from the instance it attached at
    * session creation), so the per-session [callsink] set here reaches the changes emitted by
    * the guest. Each zipline session gets exactly one bridge; closing and recreating a screen
    * creates a fresh session with a fresh bridge, and concurrent sessions never cross-wire.
@@ -533,22 +533,22 @@ private class ViewContentCodeBinding<A : AppService>(
    * [sendChanges] only.
    *
    * The channel itself belongs to the application, not to this binding: redwood creates the
-   * per-session bridge and hands it its `callsink`, but whether an RDMA channel exists at all
-   * is the app's decision (it installs one only when RDMA is enabled). Redwood must not install
-   * a channel here, or a build without an RDMA bridge library would still expose
-   * `globalThis.app_cash_redwood_rdmaSendChanges` and the guest would pick a change transport
+   * per-session bridge and hands it its `callsink`, but whether a direct bridge channel exists at all
+   * is the app's decision (it installs one only when direct bridge is enabled). Redwood must not install
+   * a channel here, or a build without a direct bridge library would still expose
+   * `globalThis.app_cash_redwood_directSendChanges` and the guest would pick a change transport
    * whose JNI bridge table is empty.
    */
-  private fun sessionRdmaBridge(): RdmaBridge? {
+  private fun sessionDirectBridge(): DirectBridge? {
     val zipline = (codeSession as? ZiplineCodeSession)?.zipline ?: return null
-    return zipline.getOrPutAttachment(RdmaBridge::class) { RdmaBridge() }
+    return zipline.getOrPutAttachment(DirectBridge::class) { DirectBridge() }
   }
 
   fun start() {
     bindingScope.launch(dispatchers.zipline) {
-      val rdmaBridge = sessionRdmaBridge()
-      rdmaBridgeOrNull = rdmaBridge
-      rdmaBridge?.callsink = this@ViewContentCodeBinding
+      val directBridge = sessionDirectBridge()
+      directBridgeOrNull = directBridge
+      directBridge?.callsink = this@ViewContentCodeBinding
 
       val scopedAppService = serviceScope.apply(codeSession.appService)
       val treehouseUi = contentSource!!.get(scopedAppService)
@@ -626,9 +626,9 @@ private class ViewContentCodeBinding<A : AppService>(
     if (canceled) return
     canceled = true
 
-    rdmaBridgeOrNull?.callsink = null
-    rdmaBridgeOrNull = null
-    (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine?.rdmaChangeSink = null
+    directBridgeOrNull?.callsink = null
+    directBridgeOrNull = null
+    (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine?.directChangeSink = null
 
     hostAdapterOrNull?.close()
     hostAdapterOrNull = null
