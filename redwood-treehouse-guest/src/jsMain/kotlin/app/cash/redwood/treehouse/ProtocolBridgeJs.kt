@@ -19,9 +19,14 @@ import app.cash.redwood.Modifier
 import app.cash.redwood.RedwoodCodegenApi
 import app.cash.redwood.protocol.Change
 import app.cash.redwood.protocol.ChangesSink
+import app.cash.redwood.protocol.ChildrenChange
 import app.cash.redwood.protocol.ChildrenTag
+import app.cash.redwood.protocol.Create
 import app.cash.redwood.protocol.Event
 import app.cash.redwood.protocol.Id
+import app.cash.redwood.protocol.ModifierChange
+import app.cash.redwood.protocol.ModifierElement
+import app.cash.redwood.protocol.PropertyChange
 import app.cash.redwood.protocol.PropertyTag
 import app.cash.redwood.protocol.RedwoodVersion
 import app.cash.redwood.protocol.WidgetTag
@@ -32,12 +37,10 @@ import app.cash.redwood.protocol.guest.ProtocolWidget.Companion.INVALID_INDEX
 import app.cash.redwood.protocol.guest.ProtocolWidgetChildren
 import app.cash.redwood.protocol.guest.ProtocolWidgetSystemFactory
 import app.cash.redwood.widget.WidgetSystem
-import app.cash.zipline.asDynamicFunction
-import app.cash.zipline.sourceType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToDynamic
+import kotlinx.serialization.json.JsonPrimitive
 
 internal actual fun GuestProtocolAdapter(
   json: Json,
@@ -63,9 +66,8 @@ internal class FastGuestProtocolAdapter(
   private var nextValue = Id.Root.value + 1
   private val widgets = JsMap<Int, ProtocolWidget>()
   private val removed = JsSet<Int>()
-  private val changes = JsArray<Change>()
-  private lateinit var changesSinkService: ChangesSinkService
-  private lateinit var sendChanges: (service: ChangesSinkService, args: Array<*>) -> Any?
+  private val changes = mutableListOf<Change>()
+  private lateinit var changesSink: ChangesSink
 
   override val widgetSystem: WidgetSystem<Unit> =
     widgetSystemFactory.create(this, mismatchHandler)
@@ -83,21 +85,7 @@ internal class FastGuestProtocolAdapter(
   }
 
   override fun initChangesSink(changesSink: ChangesSink) {
-    val changesSinkService = changesSink as ChangesSinkService
-    initChangesSink(
-      changesSinkService = changesSinkService,
-      sendChanges = changesSinkService.sourceType!!.functions
-        .single { "sendChanges" in it.signature }
-        .asDynamicFunction(),
-    )
-  }
-
-  internal fun initChangesSink(
-    changesSinkService: ChangesSinkService,
-    sendChanges: (service: ChangesSinkService, args: Array<*>) -> Any?,
-  ) {
-    this.changesSinkService = changesSinkService
-    this.sendChanges = sendChanges
+    this.changesSink = changesSink
   }
 
   override fun nextId(): Id {
@@ -110,9 +98,7 @@ internal class FastGuestProtocolAdapter(
     id: Id,
     tag: WidgetTag,
   ) {
-    val id = id
-    val tag = tag
-    changes.push(js("""["create",{"id":id,"tag":tag}]"""))
+    changes.add(Create(id, tag))
   }
 
   override fun appendBridgeChange(
@@ -130,11 +116,7 @@ internal class FastGuestProtocolAdapter(
     serializer: KSerializer<T>,
     value: T,
   ) {
-    val id = id
-    val widget = widgetTag
-    val tag = propertyTag
-    val encodedValue = value?.let { json.encodeToDynamic(serializer, it) }
-    changes.push(js("""["property",{"id":id,"widget":widget,"tag":tag,"value":encodedValue}]"""))
+    changes.add(PropertyChange(id, widgetTag, propertyTag, json.encodeToJsonElement(serializer, value)))
   }
 
   override fun appendPropertyChange(
@@ -143,11 +125,7 @@ internal class FastGuestProtocolAdapter(
     propertyTag: PropertyTag,
     value: Boolean,
   ) {
-    val id = id
-    val widget = widgetTag
-    val tag = propertyTag
-    val value = value
-    changes.push(js("""["property",{"id":id,"widget":widget,"tag":tag,"value":value}]"""))
+    changes.add(PropertyChange(id, widgetTag, propertyTag, JsonPrimitive(value)))
   }
 
   override fun appendPropertyChange(
@@ -156,11 +134,7 @@ internal class FastGuestProtocolAdapter(
     propertyTag: PropertyTag,
     value: UInt,
   ) {
-    val id = id
-    val widget = widgetTag
-    val tag = propertyTag
-    val value = value.toDouble()
-    changes.push(js("""["property",{"id":id,"widget":widget,"tag":tag,"value":value}]"""))
+    changes.add(PropertyChange(id, widgetTag, propertyTag, JsonPrimitive(value)))
   }
 
   override fun appendBridgedPropertyChange(
@@ -176,24 +150,19 @@ internal class FastGuestProtocolAdapter(
   }
 
   override fun appendModifierChange(id: Id, value: Modifier) {
-    val elements = js("[]")
+    val elements = mutableListOf<ModifierElement>()
 
     value.forEach { element ->
-      val (tag, serializer) = widgetSystemFactory.modifierTagAndSerializationStrategy(element)
-      when {
-        serializer != null -> {
-          val value = json.encodeToDynamic(serializer, element)
-          elements.push(js("""[tag,value]"""))
-        }
-
-        else -> {
-          elements.push(js("""[tag]"""))
-        }
-      }
+      elements += modifierElement(element)
     }
 
-    val id = id
-    changes.push(js("""["modifier",{"id":id,"elements":elements}]"""))
+    changes.add(ModifierChange(id, elements))
+  }
+
+  private fun <T : Modifier.Element> modifierElement(element: T): ModifierElement {
+    val (tag, serializer) = widgetSystemFactory.modifierTagAndSerializationStrategy(element)
+    if (serializer == null) return ModifierElement(tag)
+    return ModifierElement(tag, json.encodeToJsonElement(serializer, element))
   }
 
   override fun appendAdd(
@@ -203,23 +172,20 @@ internal class FastGuestProtocolAdapter(
     child: ProtocolWidget,
   ) {
     val childId = child.id.value
-    val knownId = widgets.has(childId)
     if (child.removeIndex != INVALID_INDEX) {
       check(hostSupportsRemoveDetach) { "Host v$hostVersion does not support widget re-attach" }
-      check(knownId) { "Attempted to re-attach unknown widget with ID $childId" }
+      check(widgets.has(childId)) { "Attempted to re-attach unknown widget with ID $childId" }
       removed.delete(childId)
 
-      // Update the object associated with the remove change to indicate it's only a detach.
-      changes[child.removeIndex].asDynamic()[1].detach = true
+      // Update the remove change to indicate it's only a detach.
+      val remove = changes[child.removeIndex] as ChildrenChange.Remove
+      changes[child.removeIndex] = ChildrenChange.Remove(remove.id, remove.tag, remove.index, detach = true)
     } else {
-      check(!knownId) { "Attempted to add widget with existing ID $childId" }
+      check(!widgets.has(childId)) { "Attempted to add widget with existing ID $childId" }
       widgets.set(childId, child)
     }
 
-    val id = id
-    val tag = tag
-    val index = index
-    changes.push(js("""["add",{"id":id,"tag":tag,"childId":childId,"index":index}]"""))
+    changes.add(ChildrenChange.Add(id, tag, child.id, index))
   }
 
   override fun appendMove(
@@ -229,12 +195,7 @@ internal class FastGuestProtocolAdapter(
     toIndex: Int,
     count: Int,
   ) {
-    val id = id
-    val tag = tag
-    val fromIndex = fromIndex
-    val toIndex = toIndex
-    val count = count
-    changes.push(js("""["move",{"id":id,"tag":tag,"fromIndex":fromIndex,"toIndex":toIndex,"count":count}]"""))
+    changes.add(ChildrenChange.Move(id, tag, fromIndex, toIndex, count))
   }
 
   override fun appendRemove(
@@ -244,27 +205,30 @@ internal class FastGuestProtocolAdapter(
     child: ProtocolWidget,
   ) {
     removed.add(child.id.value)
-    child.removeIndex = changes.length
-
-    val id = id
-    val tag = tag
-    val index = index
-    changes.push(js("""["remove",{"id":id,"tag":tag,"index":index,"count":1}]"""))
+    child.removeIndex = changes.size
+    changes.add(ChildrenChange.Remove(id, tag, index, detach = false))
   }
 
   override fun emitChanges() {
-    if (changes.length > 0) {
-      removed.forEach { id ->
-        val widget = widgets[id]
-          ?: throw IllegalStateException("Removed widget not present in map: $id")
-        widgets.delete(id)
-        widget.depthFirstWalk(childrenRemover)
-      }
-      removed.clear()
-
-      sendChanges(changesSinkService, arrayOf(changes))
-      changes.clear()
+    if (changes.isNotEmpty()) {
+      changesSink.sendChanges(takeChanges())
     }
+  }
+
+  /** Returns the changes accumulated since the last call to this function. */
+  internal fun takeChanges(): List<Change> {
+    val result = changes.toList()
+    this.changes.clear()
+
+    removed.forEach { id ->
+      val widget = widgets[id]
+        ?: throw IllegalStateException("Removed widget not present in map: $id")
+      widgets.delete(id)
+      widget.depthFirstWalk(childrenRemover)
+    }
+    removed.clear()
+
+    return result
   }
 
   private val childrenRemover: ProtocolWidget.ChildrenVisitor =
