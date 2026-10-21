@@ -13,7 +13,7 @@ import app.cash.redwood.protocol.ModifierTag
 import app.cash.redwood.protocol.PropertyChange
 import app.cash.redwood.protocol.PropertyTag
 import app.cash.redwood.protocol.WidgetTag
-import app.cash.zipline.RdmaChangeSink
+import app.cash.zipline.DirectChangeSink
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -21,15 +21,19 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import kotlin.concurrent.Volatile
 
 /**
- * Per-session RDMA bridge for the JVM. One instance per zipline session; all state
+ * Per-session direct change bridge for Android. One instance per zipline session; all state
  * ([callsink], [batchAccumulator]) is instance-scoped so concurrent sessions never route
  * changes into each other's UI.
+ *
+ * The stateless factories are [JvmStatic] on the companion so the JNI bridge (Context.cpp)
+ * can keep resolving them as static methods on this class. The JNI bridge now routes change
+ * delivery through the per-QuickJs [DirectChangeSink] adapter (see [asDirectChangeSink]) instead of
+ * calling the singleton directly.
  */
-public actual class RdmaBridge : ChangesSink {
+public actual class DirectBridge : ChangesSink {
 
   @Volatile
   internal actual var callsink: ChangesSink? = null
@@ -51,11 +55,11 @@ public actual class RdmaBridge : ChangesSink {
     acc.addAll(changes)
   }
 
-  public actual fun asRdmaChangeSink(): RdmaChangeSink = RdmaChangeSinkAdapter(this)
+  public actual fun asDirectChangeSink(): DirectChangeSink = DirectChangeSinkAdapter(this)
 
-  private class RdmaChangeSinkAdapter(
-    private val bridge: RdmaBridge,
-  ) : RdmaChangeSink {
+  private class DirectChangeSinkAdapter(
+    private val bridge: DirectBridge,
+  ) : DirectChangeSink {
     private val accumulator = mutableListOf<Change>()
 
     override fun createCreate(id: Int, tag: Int) {
