@@ -142,13 +142,6 @@ final class <#A: kotlin/Any> app.cash.redwood.treehouse/ChangeListRenderer { // 
     final fun render(app.cash.redwood.treehouse/TreehouseView<#A>, app.cash.redwood.protocol/SnapshotChangeList) // app.cash.redwood.treehouse/ChangeListRenderer.render|render(app.cash.redwood.treehouse.TreehouseView<1:0>;app.cash.redwood.protocol.SnapshotChangeList){}[0]
 }
 
-final class app.cash.redwood.treehouse/MemoryStateStore : app.cash.redwood.treehouse/StateStore { // app.cash.redwood.treehouse/MemoryStateStore|null[0]
-    constructor <init>() // app.cash.redwood.treehouse/MemoryStateStore.<init>|<init>(){}[0]
-
-    final suspend fun get(kotlin/String): app.cash.redwood.treehouse/StateSnapshot? // app.cash.redwood.treehouse/MemoryStateStore.get|get(kotlin.String){}[0]
-    final suspend fun put(kotlin/String, app.cash.redwood.treehouse/StateSnapshot) // app.cash.redwood.treehouse/MemoryStateStore.put|put(kotlin.String;app.cash.redwood.treehouse.StateSnapshot){}[0]
-}
-
 final class app.cash.redwood.treehouse/DirectBridge : app.cash.redwood.protocol/ChangesSink { // app.cash.redwood.treehouse/DirectBridge|null[0]
     constructor <init>() // app.cash.redwood.treehouse/DirectBridge.<init>|<init>(){}[0]
 
@@ -174,6 +167,13 @@ final class app.cash.redwood.treehouse/DirectBridge : app.cash.redwood.protocol/
         final fun jsonPrimitiveLong(kotlin/Long): kotlinx.serialization.json/JsonPrimitive // app.cash.redwood.treehouse/DirectBridge.Companion.jsonPrimitiveLong|jsonPrimitiveLong(kotlin.Long){}[0]
         final fun jsonPrimitiveString(kotlin/String): kotlinx.serialization.json/JsonPrimitive // app.cash.redwood.treehouse/DirectBridge.Companion.jsonPrimitiveString|jsonPrimitiveString(kotlin.String){}[0]
     }
+}
+
+final class app.cash.redwood.treehouse/MemoryStateStore : app.cash.redwood.treehouse/StateStore { // app.cash.redwood.treehouse/MemoryStateStore|null[0]
+    constructor <init>() // app.cash.redwood.treehouse/MemoryStateStore.<init>|<init>(){}[0]
+
+    final suspend fun get(kotlin/String): app.cash.redwood.treehouse/StateSnapshot? // app.cash.redwood.treehouse/MemoryStateStore.get|get(kotlin.String){}[0]
+    final suspend fun put(kotlin/String, app.cash.redwood.treehouse/StateSnapshot) // app.cash.redwood.treehouse/MemoryStateStore.put|put(kotlin.String;app.cash.redwood.treehouse.StateSnapshot){}[0]
 }
 
 open class app.cash.redwood.treehouse/EventListener { // app.cash.redwood.treehouse/EventListener|null[0]

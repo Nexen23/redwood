@@ -38,6 +38,54 @@ public abstract interface class app/cash/redwood/treehouse/Crashed : app/cash/re
 	public abstract fun uncaughtException (Ljava/lang/Throwable;)V
 }
 
+public final class app/cash/redwood/treehouse/DirectBridge : app/cash/redwood/protocol/ChangesSink {
+	public static final field Companion Lapp/cash/redwood/treehouse/DirectBridge$Companion;
+	public fun <init> ()V
+	public final fun asDirectChangeSink ()Lapp/cash/zipline/DirectChangeSink;
+	public static final fun createAdd (IIII)Lapp/cash/redwood/protocol/ChildrenChange;
+	public static final fun createBridgeChange (ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
+	public static final fun createCreate (II)Lapp/cash/redwood/protocol/Create;
+	public static final fun createJsonArray (Ljava/util/List;)Lkotlinx/serialization/json/JsonArray;
+	public static final fun createJsonObject (Ljava/util/List;Ljava/util/List;)Lkotlinx/serialization/json/JsonObject;
+	public static final fun createModifierChange (ILjava/util/List;)Lapp/cash/redwood/protocol/ModifierChange;
+	public static final fun createModifierElement (ILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/ModifierElement;
+	public static final fun createMove (IIIII)Lapp/cash/redwood/protocol/ChildrenChange;
+	public static final fun createPropertyChange (IIILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/PropertyChange;
+	public static final fun createRemove (IIIZ)Lapp/cash/redwood/protocol/ChildrenChange;
+	public static final fun jsonNull ()Lkotlinx/serialization/json/JsonNull;
+	public static final fun jsonPrimitiveBoolean (Z)Lkotlinx/serialization/json/JsonPrimitive;
+	public static final fun jsonPrimitiveDouble (D)Lkotlinx/serialization/json/JsonPrimitive;
+	public static final fun jsonPrimitiveInt (I)Lkotlinx/serialization/json/JsonPrimitive;
+	public static final fun jsonPrimitiveLong (J)Lkotlinx/serialization/json/JsonPrimitive;
+	public static final fun jsonPrimitiveString (Ljava/lang/String;)Lkotlinx/serialization/json/JsonPrimitive;
+	public final fun sendBatch (Ljava/util/List;)V
+	public fun sendChanges (Ljava/util/List;)V
+}
+
+public final class app/cash/redwood/treehouse/DirectBridge$Companion {
+	public final fun createAdd (IIII)Lapp/cash/redwood/protocol/ChildrenChange;
+	public final fun createBridgeChange (ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
+	public final fun createCreate (II)Lapp/cash/redwood/protocol/Create;
+	public final fun createJsonArray (Ljava/util/List;)Lkotlinx/serialization/json/JsonArray;
+	public final fun createJsonObject (Ljava/util/List;Ljava/util/List;)Lkotlinx/serialization/json/JsonObject;
+	public final fun createModifierChange (ILjava/util/List;)Lapp/cash/redwood/protocol/ModifierChange;
+	public final fun createModifierElement (ILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/ModifierElement;
+	public final fun createMove (IIIII)Lapp/cash/redwood/protocol/ChildrenChange;
+	public final fun createPropertyChange (IIILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/PropertyChange;
+	public final fun createRemove (IIIZ)Lapp/cash/redwood/protocol/ChildrenChange;
+	public final fun jsonNull ()Lkotlinx/serialization/json/JsonNull;
+	public final fun jsonPrimitiveBoolean (Z)Lkotlinx/serialization/json/JsonPrimitive;
+	public final fun jsonPrimitiveDouble (D)Lkotlinx/serialization/json/JsonPrimitive;
+	public final fun jsonPrimitiveInt (I)Lkotlinx/serialization/json/JsonPrimitive;
+	public final fun jsonPrimitiveLong (J)Lkotlinx/serialization/json/JsonPrimitive;
+	public final fun jsonPrimitiveString (Ljava/lang/String;)Lkotlinx/serialization/json/JsonPrimitive;
+}
+
+public final class app/cash/redwood/treehouse/DirectBridgeLibraryLoader {
+	public static final field INSTANCE Lapp/cash/redwood/treehouse/DirectBridgeLibraryLoader;
+	public final fun load ()V
+}
+
 public abstract interface class app/cash/redwood/treehouse/DynamicContentWidgetFactory {
 	public abstract fun Crashed ()Lapp/cash/redwood/treehouse/Crashed;
 	public abstract fun Loading ()Lapp/cash/redwood/treehouse/Loading;
@@ -94,54 +142,6 @@ public final class app/cash/redwood/treehouse/MemoryStateStore : app/cash/redwoo
 	public fun <init> ()V
 	public fun get (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun put (Ljava/lang/String;Lapp/cash/redwood/treehouse/StateSnapshot;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class app/cash/redwood/treehouse/DirectBridge : app/cash/redwood/protocol/ChangesSink {
-	public static final field Companion Lapp/cash/redwood/treehouse/DirectBridge$Companion;
-	public fun <init> ()V
-	public final fun asDirectChangeSink ()Lapp/cash/zipline/DirectChangeSink;
-	public static final fun createAdd (IIII)Lapp/cash/redwood/protocol/ChildrenChange;
-	public static final fun createBridgeChange (ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
-	public static final fun createCreate (II)Lapp/cash/redwood/protocol/Create;
-	public static final fun createJsonArray (Ljava/util/List;)Lkotlinx/serialization/json/JsonArray;
-	public static final fun createJsonObject (Ljava/util/List;Ljava/util/List;)Lkotlinx/serialization/json/JsonObject;
-	public static final fun createModifierChange (ILjava/util/List;)Lapp/cash/redwood/protocol/ModifierChange;
-	public static final fun createModifierElement (ILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/ModifierElement;
-	public static final fun createMove (IIIII)Lapp/cash/redwood/protocol/ChildrenChange;
-	public static final fun createPropertyChange (IIILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/PropertyChange;
-	public static final fun createRemove (IIIZ)Lapp/cash/redwood/protocol/ChildrenChange;
-	public static final fun jsonNull ()Lkotlinx/serialization/json/JsonNull;
-	public static final fun jsonPrimitiveBoolean (Z)Lkotlinx/serialization/json/JsonPrimitive;
-	public static final fun jsonPrimitiveDouble (D)Lkotlinx/serialization/json/JsonPrimitive;
-	public static final fun jsonPrimitiveInt (I)Lkotlinx/serialization/json/JsonPrimitive;
-	public static final fun jsonPrimitiveLong (J)Lkotlinx/serialization/json/JsonPrimitive;
-	public static final fun jsonPrimitiveString (Ljava/lang/String;)Lkotlinx/serialization/json/JsonPrimitive;
-	public final fun sendBatch (Ljava/util/List;)V
-	public fun sendChanges (Ljava/util/List;)V
-}
-
-public final class app/cash/redwood/treehouse/DirectBridge$Companion {
-	public final fun createAdd (IIII)Lapp/cash/redwood/protocol/ChildrenChange;
-	public final fun createBridgeChange (ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
-	public final fun createCreate (II)Lapp/cash/redwood/protocol/Create;
-	public final fun createJsonArray (Ljava/util/List;)Lkotlinx/serialization/json/JsonArray;
-	public final fun createJsonObject (Ljava/util/List;Ljava/util/List;)Lkotlinx/serialization/json/JsonObject;
-	public final fun createModifierChange (ILjava/util/List;)Lapp/cash/redwood/protocol/ModifierChange;
-	public final fun createModifierElement (ILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/ModifierElement;
-	public final fun createMove (IIIII)Lapp/cash/redwood/protocol/ChildrenChange;
-	public final fun createPropertyChange (IIILkotlinx/serialization/json/JsonElement;)Lapp/cash/redwood/protocol/PropertyChange;
-	public final fun createRemove (IIIZ)Lapp/cash/redwood/protocol/ChildrenChange;
-	public final fun jsonNull ()Lkotlinx/serialization/json/JsonNull;
-	public final fun jsonPrimitiveBoolean (Z)Lkotlinx/serialization/json/JsonPrimitive;
-	public final fun jsonPrimitiveDouble (D)Lkotlinx/serialization/json/JsonPrimitive;
-	public final fun jsonPrimitiveInt (I)Lkotlinx/serialization/json/JsonPrimitive;
-	public final fun jsonPrimitiveLong (J)Lkotlinx/serialization/json/JsonPrimitive;
-	public final fun jsonPrimitiveString (Ljava/lang/String;)Lkotlinx/serialization/json/JsonPrimitive;
-}
-
-public final class app/cash/redwood/treehouse/DirectBridgeLibraryLoader {
-	public static final field INSTANCE Lapp/cash/redwood/treehouse/DirectBridgeLibraryLoader;
-	public final fun load ()V
 }
 
 public abstract interface class app/cash/redwood/treehouse/StateStore {
