@@ -187,5 +187,5 @@ internal data class ParsedProtocolModifierProperty(
 @Serializable
 internal data class ParsedAnnotation(
   override val type: FqType,
-  override val arguments: Map<String, String>
+  override val arguments: Map<String, String>,
 ) : Annotated

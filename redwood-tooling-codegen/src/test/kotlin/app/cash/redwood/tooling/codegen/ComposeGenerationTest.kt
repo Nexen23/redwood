@@ -219,8 +219,8 @@ class ComposeGenerationTest {
 
   @Schema(
     [
-      AnnotatedWidget::class
-    ]
+      AnnotatedWidget::class,
+    ],
   )
   interface AnnotatedSchema
 

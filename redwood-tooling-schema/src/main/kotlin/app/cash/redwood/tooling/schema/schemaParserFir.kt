@@ -909,7 +909,6 @@ private data class DeprecationAnnotation(
 private fun FirContext.findExtraAnnotations(
   annotations: List<FirAnnotation>,
 ): List<ParsedAnnotation> {
-
   return annotations.filter { annotation ->
     val name = annotation.fqName(firSession) ?: return@filter false
     name !in FqNames.Redwod && !name.startsWith(FqName("kotlin."))
@@ -923,7 +922,7 @@ private fun FirContext.findExtraAnnotations(
 
     ParsedAnnotation(
       type = type,
-      arguments = arguments
+      arguments = arguments,
     )
   }
 }
@@ -951,6 +950,7 @@ private fun DeprecationAnnotation.toDeprecation(source: () -> String): ParsedDep
 private fun ConeTypeProjection.toFqType(): FqType {
   return when (this) {
     ConeStarProjection -> FqType.Star
+
     is ConeKotlinTypeProjection -> {
       when (val type = type) {
         is ConeClassLikeType -> {
@@ -985,7 +985,7 @@ private fun ClassId.toFqType() = FqType(
 )
 
 private fun FirExpression.toAnnotationValue(
-  session: FirSession
+  session: FirSession,
 ): String? = when (this) {
   is FirLiteralExpression -> {
     when (val value = value) {
@@ -999,7 +999,7 @@ private fun FirExpression.toAnnotationValue(
       is Long,
       is Float,
       is Double,
-        -> value.toString()
+      -> value.toString()
 
       else -> null
     }

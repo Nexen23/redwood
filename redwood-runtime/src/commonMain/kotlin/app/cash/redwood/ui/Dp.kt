@@ -37,8 +37,7 @@ public value class Dp(
   // them as comparing == 0, but the equality check fails, so Unspecified < 1.dp == false
   // and 1.dp < Unspecified == false
   @Stable
-  override operator fun compareTo(other: Dp): Int =
-    if (this == Unspecified || other == Unspecified) 0 else value.compareTo(other.value)
+  override operator fun compareTo(other: Dp): Int = if (this == Unspecified || other == Unspecified) 0 else value.compareTo(other.value)
 
   /** Add two [Dp]s together. */
   @Stable
