@@ -129,7 +129,6 @@ class RedwoodBuildPlugin : Plugin<Project> {
         java {
           it.target("build-support/redwood-settings/src/**/*.java")
           it.googleJavaFormat(libs.googleJavaFormat.get().version)
-          it.licenseHeaderFile(licenseHeaderFile)
         }
       }
 
@@ -159,7 +158,6 @@ class RedwoodBuildPlugin : Plugin<Project> {
               "ktlint_compose_compositionlocal-allowlist" to "disabled",
             ),
           )
-        it.licenseHeaderFile(licenseHeaderFile)
       }
     }
   }

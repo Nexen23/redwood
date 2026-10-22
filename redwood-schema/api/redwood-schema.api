@@ -3,6 +3,7 @@ public abstract interface annotation class app/cash/redwood/schema/Children : ja
 }
 
 public abstract interface annotation class app/cash/redwood/schema/Modifier : java/lang/annotation/Annotation {
+	public abstract fun internalModifier ()Z
 	public abstract fun scopes ()[Ljava/lang/Class;
 	public abstract fun tag ()I
 }

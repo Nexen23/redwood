@@ -2,10 +2,15 @@
 
 ## Unreleased
 
+New:
+- Schema `@Modifier`s can now set `internalModifier = true` to have their generated `Modifier` extension functions generated as internal. This can be used to hide modifier functions that should no longer be used, or to expose a public overload that wraps the internal one, for example.
+- Support Dp maths.
+
 Fixed:
 - Fix memory leaks in UIView layout components (`UIViewBox`, `UIViewFlexContainer`, `RedwoodUIView`)
 - Fix memory leak in `HostProtocolAdapter`
 - Fix memory leak in `RealTreehouseApp.close`
+- Fix Dp not accepting negative values (e.g. Modifier.offset(-10.dp))
 
 These leaks affected some Treehouse-based screens and prevented UI components and their associated memory from being released after dismissal.
 
