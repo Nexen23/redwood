@@ -1,10 +1,25 @@
+/*
+ * Copyright (C) 2026 Square, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package app.cash.redwood.treehouse
 
 import app.cash.redwood.protocol.BridgeChange
+import app.cash.redwood.protocol.Change
 import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.ChildrenChange
 import app.cash.redwood.protocol.ChildrenTag
-import app.cash.redwood.protocol.Change
 import app.cash.redwood.protocol.Create
 import app.cash.redwood.protocol.Id
 import app.cash.redwood.protocol.ModifierChange
@@ -14,6 +29,7 @@ import app.cash.redwood.protocol.PropertyChange
 import app.cash.redwood.protocol.PropertyTag
 import app.cash.redwood.protocol.WidgetTag
 import app.cash.zipline.DirectChangeSink
+import kotlin.concurrent.Volatile
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -21,7 +37,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
-import kotlin.concurrent.Volatile
 
 /**
  * Per-session direct change bridge for Android. One instance per zipline session; all state
@@ -135,32 +150,25 @@ public actual class DirectBridge : ChangesSink {
     public actual fun createCreate(id: Int, tag: Int): Create = Create(Id(id), WidgetTag(tag))
 
     @JvmStatic
-    public actual fun createAdd(id: Int, tag: Int, childId: Int, index: Int): ChildrenChange =
-      ChildrenChange.Add(Id(id), ChildrenTag(tag), Id(childId), index)
+    public actual fun createAdd(id: Int, tag: Int, childId: Int, index: Int): ChildrenChange = ChildrenChange.Add(Id(id), ChildrenTag(tag), Id(childId), index)
 
     @JvmStatic
-    public actual fun createRemove(id: Int, tag: Int, index: Int, detach: Boolean): ChildrenChange =
-      ChildrenChange.Remove(Id(id), ChildrenTag(tag), index, detach)
+    public actual fun createRemove(id: Int, tag: Int, index: Int, detach: Boolean): ChildrenChange = ChildrenChange.Remove(Id(id), ChildrenTag(tag), index, detach)
 
     @JvmStatic
-    public actual fun createMove(id: Int, tag: Int, fromIndex: Int, toIndex: Int, count: Int): ChildrenChange =
-      ChildrenChange.Move(Id(id), ChildrenTag(tag), fromIndex, toIndex, count)
+    public actual fun createMove(id: Int, tag: Int, fromIndex: Int, toIndex: Int, count: Int): ChildrenChange = ChildrenChange.Move(Id(id), ChildrenTag(tag), fromIndex, toIndex, count)
 
     @JvmStatic
-    public actual fun createPropertyChange(id: Int, widgetTag: Int, propertyTag: Int, value: JsonElement): PropertyChange =
-      PropertyChange(Id(id), WidgetTag(widgetTag), PropertyTag(propertyTag), value)
+    public actual fun createPropertyChange(id: Int, widgetTag: Int, propertyTag: Int, value: JsonElement): PropertyChange = PropertyChange(Id(id), WidgetTag(widgetTag), PropertyTag(propertyTag), value)
 
     @JvmStatic
-    public actual fun createModifierChange(id: Int, elements: List<ModifierElement>): ModifierChange =
-      ModifierChange(Id(id), elements)
+    public actual fun createModifierChange(id: Int, elements: List<ModifierElement>): ModifierChange = ModifierChange(Id(id), elements)
 
     @JvmStatic
-    public actual fun createModifierElement(tag: Int, value: JsonElement): ModifierElement =
-      ModifierElement(ModifierTag(tag), value)
+    public actual fun createModifierElement(tag: Int, value: JsonElement): ModifierElement = ModifierElement(ModifierTag(tag), value)
 
     @JvmStatic
-    public actual fun createBridgeChange(id: Int, wrapped: Any?): BridgeChange =
-      BridgeChange(Id(id), wrapped)
+    public actual fun createBridgeChange(id: Int, wrapped: Any?): BridgeChange = BridgeChange(Id(id), wrapped)
 
     @JvmStatic
     public actual fun jsonPrimitiveString(value: String): JsonPrimitive = JsonPrimitive(value)
@@ -181,11 +189,9 @@ public actual class DirectBridge : ChangesSink {
     public actual fun jsonNull(): JsonNull = JsonNull
 
     @JvmStatic
-    public actual fun createJsonArray(elements: List<JsonElement>): JsonArray =
-      buildJsonArray { elements.forEach { add(it) } }
+    public actual fun createJsonArray(elements: List<JsonElement>): JsonArray = buildJsonArray { elements.forEach { add(it) } }
 
     @JvmStatic
-    public actual fun createJsonObject(keys: List<String>, values: List<JsonElement>): JsonObject =
-      buildJsonObject { keys.zip(values).forEach { (k, v) -> put(k, v) } }
+    public actual fun createJsonObject(keys: List<String>, values: List<JsonElement>): JsonObject = buildJsonObject { keys.zip(values).forEach { (k, v) -> put(k, v) } }
   }
 }
