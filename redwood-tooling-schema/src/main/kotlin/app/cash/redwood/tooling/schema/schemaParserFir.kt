@@ -663,6 +663,7 @@ private fun FirContext.parseModifier(
     documentation = documentation,
     deprecation = deprecation,
     properties = properties,
+    internalModifier = annotation.internalModifier,
     annotations = extraAnnotations,
   )
 }
@@ -863,12 +864,20 @@ private fun FirContext.findModifierAnnotation(
       classId.toFqType()
     }
 
-  return ModifierAnnotation(tagExpression.valueAsInt(), scopes)
+  val internalModifierExpression = annotation.argumentMapping
+    .mapping[Name.identifier("internalModifier")] as FirLiteralExpression?
+
+  return ModifierAnnotation(
+    tag = tagExpression.valueAsInt(),
+    scopes = scopes,
+    internalModifier = internalModifierExpression?.valueAsBoolean() == true,
+  )
 }
 
 private data class ModifierAnnotation(
   val tag: Int,
   val scopes: List<FqType>,
+  val internalModifier: Boolean,
 )
 
 private fun FirContext.findDeprecationAnnotation(

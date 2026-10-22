@@ -170,6 +170,7 @@ internal data class ParsedProtocolModifier(
   override val deprecation: ParsedDeprecation? = null,
   override val documentation: String? = null,
   override val properties: List<ParsedProtocolModifierProperty> = emptyList(),
+  override val internalModifier: Boolean = false,
   override val annotations: List<ParsedAnnotation> = emptyList(),
 ) : ProtocolModifier
 

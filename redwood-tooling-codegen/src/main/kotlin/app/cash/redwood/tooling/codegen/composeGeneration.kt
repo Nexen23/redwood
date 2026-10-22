@@ -269,6 +269,7 @@ private fun generateModifierFunction(
 ): FunSpec {
   val simpleName = modifier.type.flatName
   return FunSpec.builder(simpleName.replaceFirstChar(Char::lowercaseChar))
+    .addModifiers(if (modifier.internalModifier) INTERNAL else PUBLIC)
     .addAnnotation(ComposeRuntime.Stable)
     .maybeAddExtraAnnotations(modifier.annotations)
     .receiver(Redwood.Modifier)
