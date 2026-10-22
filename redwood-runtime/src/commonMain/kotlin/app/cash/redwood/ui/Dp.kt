@@ -26,22 +26,62 @@ import kotlinx.serialization.Serializable
  * Represents a density-independent pixel value. Values will be scaled and
  * converted into standard pixel values according to the device's density.
  */
+@Suppress("NOTHING_TO_INLINE")
 @[Immutable JvmInline Serializable]
 @WithJS2HostBridge
 @WithHost2JSBridge
 public value class Dp(
   public val value: Double,
-) {
-  init {
-    require(value >= 0) {
-      "value must be non-negative: $value"
-    }
-  }
+) : Comparable<Dp> {
+  // Unspecified values should compare false against all other values. This always sets
+  // them as comparing == 0, but the equality check fails, so Unspecified < 1.dp == false
+  // and 1.dp < Unspecified == false
+  @Stable
+  override operator fun compareTo(other: Dp): Int =
+    if (this == Unspecified || other == Unspecified) 0 else value.compareTo(other.value)
 
-  override fun toString(): String = "$value.dp"
+  /** Add two [Dp]s together. */
+  @Stable
+  public inline operator fun plus(other: Dp): Dp = Dp(this.value + other.value)
+
+  /** Subtract a Dp from another one. */
+  @Stable
+  public inline operator fun minus(other: Dp): Dp = Dp(this.value - other.value)
+
+  /** This is the same as multiplying the Dp by -1.0. */
+  @Stable
+  public inline operator fun unaryMinus(): Dp = Dp(-value)
+
+  @Stable
+  public inline operator fun div(other: Double): Dp = Dp(value / other)
+
+  @Stable
+  public inline operator fun div(other: Float): Dp = Dp(value / other)
+
+  @Stable
+  public inline operator fun div(other: Int): Dp = Dp(value / other)
+
+  @Stable
+  public inline operator fun div(other: Dp): Double = value / other.value
+
+  @Stable
+  public inline operator fun times(other: Double): Dp = Dp(value * other)
+
+  @Stable
+  public inline operator fun times(other: Float): Dp = Dp(value * other)
+
+  @Stable
+  public inline operator fun times(other: Int): Dp = Dp(value * other)
+
+  @Stable
+  override fun toString(): String = if (value == Unspecified.value) "Dp.Unspecified" else "$value.dp"
 
   /** Empty companion object used for extensions. */
-  public companion object
+  public companion object {
+    // Can't pass Double.isNaN due to 53bit limit for js Number.
+    @Stable
+    public val Unspecified: Dp = Int.MAX_VALUE.dp
+  }
 }
 
 /** Create a [Dp] from an [Int]. */
