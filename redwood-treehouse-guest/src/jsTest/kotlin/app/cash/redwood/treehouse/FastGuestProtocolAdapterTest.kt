@@ -33,7 +33,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind.STRING
@@ -41,13 +40,12 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromDynamic
 import kotlinx.serialization.modules.SerializersModule
 
 /**
  * Confirm that [FastGuestProtocolAdapter] behaves the same as [DefaultGuestProtocolAdapter].
  */
-@OptIn(ExperimentalSerializationApi::class, RedwoodCodegenApi::class)
+@OptIn(RedwoodCodegenApi::class)
 class FastGuestProtocolAdapterTest {
   @Test fun consistentWithDefaultGuestProtocolAdapter() {
     assertChangesEqual { root, widgetSystem ->
@@ -228,13 +226,10 @@ class FastGuestProtocolAdapterTest {
 
     val result = mutableListOf<Change>()
     guest.initChangesSink(
-      changesSinkService = object : ChangesSinkService {
+      object : ChangesSinkService {
         override fun sendChanges(changes: List<Change>) {
+          result += changes
         }
-      },
-      sendChanges = { _, args ->
-        result += json.decodeFromDynamic<List<Change>>(args.single())
-        Unit
       },
     )
 
