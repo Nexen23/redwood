@@ -86,18 +86,31 @@ public final class app/cash/redwood/ui/Density$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class app/cash/redwood/ui/Dp {
+public final class app/cash/redwood/ui/Dp : java/lang/Comparable {
 	public static final field Companion Lapp/cash/redwood/ui/Dp$Companion;
 	public static final synthetic fun box-impl (D)Lapp/cash/redwood/ui/Dp;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo-mnpKzHI (D)I
+	public static fun compareTo-mnpKzHI (DD)I
 	public static fun constructor-impl (D)D
+	public static final fun div-Ht7-4L4 (DD)D
+	public static final fun div-Ht7-4L4 (DF)D
+	public static final fun div-Ht7-4L4 (DI)D
+	public static final fun div-mnpKzHI (DD)D
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (DLjava/lang/Object;)Z
 	public static final fun equals-impl0 (DD)Z
 	public final fun getValue ()D
 	public fun hashCode ()I
 	public static fun hashCode-impl (D)I
+	public static final fun minus-jUJwbWc (DD)D
+	public static final fun plus-jUJwbWc (DD)D
+	public static final fun times-Ht7-4L4 (DD)D
+	public static final fun times-Ht7-4L4 (DF)D
+	public static final fun times-Ht7-4L4 (DI)D
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (D)Ljava/lang/String;
+	public static final fun unaryMinus-hdgK9uQ (D)D
 	public final synthetic fun unbox-impl ()D
 }
 
@@ -113,6 +126,7 @@ public final synthetic class app/cash/redwood/ui/Dp$$serializer : kotlinx/serial
 }
 
 public final class app/cash/redwood/ui/Dp$Companion {
+	public final fun getUnspecified-hdgK9uQ ()D
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 

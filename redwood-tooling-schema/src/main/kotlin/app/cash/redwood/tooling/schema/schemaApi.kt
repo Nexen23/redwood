@@ -114,6 +114,8 @@ public interface Modifier {
   /** Non-empty list for a 'data class' [type] or empty list for 'object' [type]. */
   public val properties: List<Property>
 
+  public val internalModifier: Boolean
+
   public val annotations: List<Annotated>
 
   public interface Property {

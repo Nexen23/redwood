@@ -238,4 +238,10 @@ public annotation class Children(
 public annotation class Modifier(
   val tag: Int,
   vararg val scopes: KClass<*>,
+
+  /**
+   * Denotes whether the generated `Modifier` extension function for this modifier will be marked
+   * as public or internal.
+   */
+  val internalModifier: Boolean = false,
 )

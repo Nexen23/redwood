@@ -16,6 +16,7 @@
 package app.cash.redwood.tooling.codegen
 
 import app.cash.redwood.schema.Children
+import app.cash.redwood.schema.Modifier
 import app.cash.redwood.schema.Property
 import app.cash.redwood.schema.Schema
 import app.cash.redwood.schema.Widget
@@ -193,13 +194,33 @@ class ComposeGenerationTest {
       .contains("internal fun ComposeGenerationTestInternalComposableWidget(")
   }
 
+  @Schema(
+    [
+      InternalModifier::class,
+    ],
+  )
+  interface InternalModifierSchema
+
+  @Modifier(1, internalModifier = true)
+  data class InternalModifier(
+    val width: Double,
+  )
+
+  @Test fun internalModifier() {
+    val schema = parseTestSchema(InternalModifierSchema::class).schema
+
+    val fileSpec = generateUnscopedModifiers(schema)!!
+    assertThat(fileSpec.toString())
+      .contains("internal fun Modifier.composeGenerationTestInternalModifier(")
+  }
+
   @Retention(AnnotationRetention.SOURCE)
   annotation class TestAnnotation(val member: String)
 
   @Schema(
     [
-      AnnotatedWidget::class
-    ]
+      AnnotatedWidget::class,
+    ],
   )
   interface AnnotatedSchema
 

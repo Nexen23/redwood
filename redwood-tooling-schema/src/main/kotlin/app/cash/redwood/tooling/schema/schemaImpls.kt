@@ -170,6 +170,7 @@ internal data class ParsedProtocolModifier(
   override val deprecation: ParsedDeprecation? = null,
   override val documentation: String? = null,
   override val properties: List<ParsedProtocolModifierProperty> = emptyList(),
+  override val internalModifier: Boolean = false,
   override val annotations: List<ParsedAnnotation> = emptyList(),
 ) : ProtocolModifier
 
@@ -186,5 +187,5 @@ internal data class ParsedProtocolModifierProperty(
 @Serializable
 internal data class ParsedAnnotation(
   override val type: FqType,
-  override val arguments: Map<String, String>
+  override val arguments: Map<String, String>,
 ) : Annotated

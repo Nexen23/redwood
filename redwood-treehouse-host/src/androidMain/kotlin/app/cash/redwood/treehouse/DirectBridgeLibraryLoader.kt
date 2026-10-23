@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2026 Square, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package app.cash.redwood.treehouse
 
 /**
@@ -8,12 +23,12 @@ package app.cash.redwood.treehouse
  * It must be loaded after libhermesvmlean (loaded by Zipline's JsEngine) so Hermes
  * symbols are available for resolution.
  */
-public object RdmaBridgeLibraryLoader {
+public object DirectBridgeLibraryLoader {
 
   public fun load() {
     System.loadLibrary("redwood-bridge")
 
-    // The bridge dispatch (rdmaChangeToJava) calls JNI FindClass for bridge-
+    // The bridge dispatch (directChangeToJava) calls JNI FindClass for bridge-
     // annotated classes (e.g. ChildrenChange$Add). These classes pull in
     // kotlinx.serialization, whose transitive dependencies include
     // CoroutineExceptionHandlerImplKt. Its <clinit> calls ServiceLoader.load(),
@@ -24,6 +39,8 @@ public object RdmaBridgeLibraryLoader {
     //
     // Preload the class now (while allowThreadDiskReads is still in effect)
     // so its <clinit> completes before StrictMode is re-enabled.
-    try { Class.forName("kotlinx.coroutines.internal.CoroutineExceptionHandlerImplKt") } catch (_: Exception) { }
+    try {
+      Class.forName("kotlinx.coroutines.internal.CoroutineExceptionHandlerImplKt")
+    } catch (_: Exception) { }
   }
 }

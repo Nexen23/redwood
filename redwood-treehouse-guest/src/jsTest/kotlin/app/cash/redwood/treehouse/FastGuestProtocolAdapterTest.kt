@@ -119,11 +119,11 @@ class FastGuestProtocolAdapterTest {
   }
 
   @Test fun bridgeAdapterInstallsAndRoutesDirectEvents() {
-    // The bridge adapter sends guest->host changes through the RDMA global; stub it with no-ops.
+    // The bridge adapter sends guest->host changes through the direct change bridge global; stub it with no-ops.
     js(
       """
-      if (typeof globalThis.app_cash_redwood_rdmaSendChanges === 'undefined') {
-        globalThis.app_cash_redwood_rdmaSendChanges = {
+      if (typeof globalThis.app_cash_redwood_directSendChanges === 'undefined') {
+        globalThis.app_cash_redwood_directSendChanges = {
           appendBridgeChange: function () {},
           finishChanges: function () {},
         }

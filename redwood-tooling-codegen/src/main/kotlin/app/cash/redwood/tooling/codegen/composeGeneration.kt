@@ -262,13 +262,13 @@ internal fun generateModifierImpls(schema: Schema, bridgeJvmPackage: String? = n
   }
 }
 
-
 private fun generateModifierFunction(
   schema: Schema,
   modifier: Modifier,
 ): FunSpec {
   val simpleName = modifier.type.flatName
   return FunSpec.builder(simpleName.replaceFirstChar(Char::lowercaseChar))
+    .addModifiers(if (modifier.internalModifier) INTERNAL else PUBLIC)
     .addAnnotation(ComposeRuntime.Stable)
     .maybeAddExtraAnnotations(modifier.annotations)
     .receiver(Redwood.Modifier)
@@ -325,7 +325,7 @@ private fun generateModifierImpl(
 
   // Build @WithJS2HostBridge annotation, optionally with targetFqn for cross-package JS→JVM mapping.
   val bridgeAnnotation = AnnotationSpec.builder(
-    ClassName("app.cash.zipline.bridge.support", "WithJS2HostBridge")
+    ClassName("app.cash.zipline.bridge.support", "WithJS2HostBridge"),
   )
   if (!bridgeJvmPackage.isNullOrEmpty()) {
     val targetFqn = "$bridgeJvmPackage.${modifier.type.flatName}Impl"

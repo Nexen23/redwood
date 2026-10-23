@@ -226,15 +226,26 @@ final value class app.cash.redwood.ui/Density { // app.cash.redwood.ui/Density|n
     }
 }
 
-final value class app.cash.redwood.ui/Dp { // app.cash.redwood.ui/Dp|null[0]
+final value class app.cash.redwood.ui/Dp : kotlin/Comparable<app.cash.redwood.ui/Dp> { // app.cash.redwood.ui/Dp|null[0]
     constructor <init>(kotlin/Double) // app.cash.redwood.ui/Dp.<init>|<init>(kotlin.Double){}[0]
 
     final val value // app.cash.redwood.ui/Dp.value|{}value[0]
         final fun <get-value>(): kotlin/Double // app.cash.redwood.ui/Dp.value.<get-value>|<get-value>(){}[0]
 
+    final fun compareTo(app.cash.redwood.ui/Dp): kotlin/Int // app.cash.redwood.ui/Dp.compareTo|compareTo(app.cash.redwood.ui.Dp){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.ui/Dp.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // app.cash.redwood.ui/Dp.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // app.cash.redwood.ui/Dp.toString|toString(){}[0]
+    final inline fun div(app.cash.redwood.ui/Dp): kotlin/Double // app.cash.redwood.ui/Dp.div|div(app.cash.redwood.ui.Dp){}[0]
+    final inline fun div(kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.div|div(kotlin.Double){}[0]
+    final inline fun div(kotlin/Float): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.div|div(kotlin.Float){}[0]
+    final inline fun div(kotlin/Int): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.div|div(kotlin.Int){}[0]
+    final inline fun minus(app.cash.redwood.ui/Dp): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.minus|minus(app.cash.redwood.ui.Dp){}[0]
+    final inline fun plus(app.cash.redwood.ui/Dp): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.plus|plus(app.cash.redwood.ui.Dp){}[0]
+    final inline fun times(kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.times|times(kotlin.Double){}[0]
+    final inline fun times(kotlin/Float): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.times|times(kotlin.Float){}[0]
+    final inline fun times(kotlin/Int): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.times|times(kotlin.Int){}[0]
+    final inline fun unaryMinus(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.unaryMinus|unaryMinus(){}[0]
 
     final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.ui/Dp> { // app.cash.redwood.ui/Dp.$serializer|null[0]
         final val descriptor // app.cash.redwood.ui/Dp.$serializer.descriptor|{}descriptor[0]
@@ -246,6 +257,9 @@ final value class app.cash.redwood.ui/Dp { // app.cash.redwood.ui/Dp|null[0]
     }
 
     final object Companion { // app.cash.redwood.ui/Dp.Companion|null[0]
+        final val Unspecified // app.cash.redwood.ui/Dp.Companion.Unspecified|{}Unspecified[0]
+            final fun <get-Unspecified>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.Companion.Unspecified.<get-Unspecified>|<get-Unspecified>(){}[0]
+
         final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Dp> // app.cash.redwood.ui/Dp.Companion.serializer|serializer(){}[0]
     }
 }
