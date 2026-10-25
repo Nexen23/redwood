@@ -147,6 +147,17 @@ public annotation class Widget(
    * - Conditionally delegating to multiple widget bindings while only exposing a single function.
    */
   val internalComposable: Boolean = false,
+  /**
+   * Denotes whether the generated `@Composable` function for this widget should be skipped
+   * entirely.
+   *
+   * When set to `true` the codegen will not emit a `@Composable` function for this widget, so you
+   * must define one in the main sources of the module which generates the functions. This is useful
+   * when the generated function's signature (such as the position of its `modifier` parameter) does
+   * not match the desired public API. Writing your own function avoids an unnecessary delegation call
+   * and prevents the generated function from clashing with your public overload.
+   */
+  val noComposable: Boolean = false,
 )
 
 /**

@@ -5,6 +5,7 @@
 New:
 - Schema `@Modifier`s can now set `internalModifier = true` to have their generated `Modifier` extension functions generated as internal. This can be used to hide modifier functions that should no longer be used, or to expose a public overload that wraps the internal one, for example.
 - Support Dp maths.
+- Schema `@Widget`s can now set `noComposable = true` to skip generating their `@Composable` function entirely. This is useful when the generated signature (such as the position of the `modifier` parameter) doesn't match the desired public API, allowing you to write your own function without an extra delegation call or a clashing overload in the generating module.
 
 Fixed:
 - Fix memory leaks in UIView layout components (`UIViewBox`, `UIViewFlexContainer`, `RedwoodUIView`)
