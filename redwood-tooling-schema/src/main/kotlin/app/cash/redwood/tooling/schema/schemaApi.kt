@@ -70,6 +70,9 @@ public interface Widget {
 
   public val internalComposable: Boolean
 
+  /** If true, the codegen must not emit a `@Composable` function for this widget. */
+  public val noComposable: Boolean
+
   public val annotations: List<Annotated>
 
   public sealed interface Trait {

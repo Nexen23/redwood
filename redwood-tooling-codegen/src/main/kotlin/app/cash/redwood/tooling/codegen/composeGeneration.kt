@@ -66,7 +66,9 @@ fun Row(
 internal fun generateComposable(
   schema: Schema,
   widget: Widget,
-): FileSpec {
+): FileSpec? {
+  if (widget.noComposable) return null
+
   val widgetType = schema.widgetType(widget).parameterizedBy(ANY)
   val flatName = widget.type.flatName
   return buildFileSpec(schema.composePackage(), flatName) {

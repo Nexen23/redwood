@@ -25,6 +25,7 @@ import app.cash.redwood.tooling.schema.parseTestSchema
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.isNull
 import org.junit.Test
 
 object RowScope
@@ -212,6 +213,26 @@ class ComposeGenerationTest {
     val fileSpec = generateUnscopedModifiers(schema)!!
     assertThat(fileSpec.toString())
       .contains("internal fun Modifier.composeGenerationTestInternalModifier(")
+  }
+
+  @Schema(
+    [
+      NoComposableWidget::class,
+    ],
+  )
+  interface NoComposableSchema
+
+  @Widget(1, noComposable = true)
+  data class NoComposableWidget(
+    @Property(1)
+    val text: String,
+  )
+
+  @Test fun noComposable() {
+    val schema = parseTestSchema(NoComposableSchema::class).schema
+
+    val fileSpec = generateComposable(schema, schema.widgets.single())
+    assertThat(fileSpec).isNull()
   }
 
   @Retention(AnnotationRetention.SOURCE)

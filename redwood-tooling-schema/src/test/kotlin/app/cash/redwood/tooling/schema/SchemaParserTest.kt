@@ -695,6 +695,23 @@ class SchemaParserTest {
 
   @Schema(
     [
+      NoComposableWidget::class,
+    ],
+  )
+  interface NoComposableWidgetSchema
+
+  @Widget(1, noComposable = true)
+  data class NoComposableWidget(
+    @Property(1) val text: String,
+  )
+
+  @Test fun noComposableWidget() {
+    val schema = parseTestSchema(NoComposableWidgetSchema::class).schema
+    assertThat(schema.widgets.single().noComposable).isTrue()
+  }
+
+  @Schema(
+    [
       ObjectModifier::class,
     ],
   )
@@ -1466,7 +1483,7 @@ Property
     [
       ExtraAnnotatedWidget::class,
       ExtraAnnotatedModifier::class,
-    ]
+    ],
   )
   interface ExtraAnnotatedSchema
 

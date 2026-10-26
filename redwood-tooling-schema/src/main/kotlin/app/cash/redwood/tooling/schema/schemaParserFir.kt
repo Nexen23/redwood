@@ -603,6 +603,7 @@ private fun FirContext.parseWidget(
     deprecation = deprecation,
     traits = traits,
     internalComposable = annotation.internalComposable,
+    noComposable = annotation.noComposable,
     annotations = extraAnnotations,
   )
 }
@@ -782,11 +783,15 @@ private fun FirContext.findWidgetAnnotation(
   val internalComposableExpression = annotation.argumentMapping
     .mapping[Name.identifier("internalComposable")] as FirLiteralExpression?
 
+  val noComposableExpression = annotation.argumentMapping
+    .mapping[Name.identifier("noComposable")] as FirLiteralExpression?
+
   return WidgetAnnotation(
     tag = tagExpression.valueAsInt(),
     reservedProperties = reservedProperties,
     reservedChildren = reservedChildren,
     internalComposable = internalComposableExpression?.valueAsBoolean() == true,
+    noComposable = noComposableExpression?.valueAsBoolean() == true,
   )
 }
 
@@ -795,6 +800,7 @@ private data class WidgetAnnotation(
   val reservedProperties: List<Int>,
   val reservedChildren: List<Int>,
   val internalComposable: Boolean,
+  val noComposable: Boolean,
 )
 
 private fun FirContext.findPropertyAnnotation(

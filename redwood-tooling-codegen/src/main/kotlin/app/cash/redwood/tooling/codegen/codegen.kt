@@ -48,7 +48,7 @@ internal fun SchemaSet.generateFileSpecs(type: CodegenType, bridgeJvmPackage: St
           add(generateModifierScope(schema, scope))
         }
         for (widget in schema.widgets) {
-          add(generateComposable(schema, widget))
+          generateComposable(schema, widget)?.let { add(it) }
         }
       }
 

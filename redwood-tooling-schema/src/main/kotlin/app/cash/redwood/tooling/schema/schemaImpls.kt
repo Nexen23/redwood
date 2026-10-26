@@ -119,6 +119,7 @@ internal data class ParsedProtocolWidget(
   override val documentation: String? = null,
   override val traits: List<ProtocolTrait> = emptyList(),
   override val internalComposable: Boolean = false,
+  override val noComposable: Boolean = false,
   override val annotations: List<ParsedAnnotation> = emptyList(),
 ) : ProtocolWidget
 
